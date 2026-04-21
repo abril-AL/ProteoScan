@@ -1,2 +1,11 @@
 # ProteoScan
-CLI that takes raw protein sequences, runs it through an ESM-2/SGDClassifier pipeline, and then uses a secondary logic layer to summarize the biology and generate a visual representation.
+GUI that takes raw protein sequences, runs it through an ESM-2/SGDClassifier pipeline, and then uses a secondary logic layer to summarize the biology and generate a visual representation.
+
+# Overview
+
+'base' directory
+- includes files related to the original class assignment that ProteoScan builds off of
+- has the data that was used to train and test the model
+- 'legacy_code.py' the "all-in-one" script that trains and predicts
+    - calls 'batching.py' for feature extraction
+
