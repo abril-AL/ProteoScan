@@ -72,9 +72,9 @@ def main():
         print("Embedding proteins...")
         embedding_dict = {}
         # USE THIS ONE FOR REAL MODEL
-        #for protein_id, sequence in tqdm(seq_dict.items(), desc="Embedding sequences", unit="seq"):
+        for protein_id, sequence in tqdm(seq_dict.items(), desc="Embedding sequences", unit="seq"):
         # SLICE: Only take the first 500 items to speed up development bc i dont have 8 hours
-        for protein_id, sequence in tqdm(list(seq_dict.items())[:100], desc="Embedding sequences", unit="seq"):
+        #for protein_id, sequence in tqdm(list(seq_dict.items())[:100], desc="Embedding sequences", unit="seq"):
             inputs = tokenizer(sequence, return_tensors="pt", truncation=True)
             inputs = {k: v.to(device) for k, v in inputs.items()}
 
