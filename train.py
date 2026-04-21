@@ -27,6 +27,18 @@ def main():
     # Only load the training data. We do not care about test.tsv here.
     train_df = pd.read_csv("base/train.tsv", sep='\t')
     
+    print("Mapping 8-state labels to 3-state (Q3)...")
+    def map_to_q3(label):
+        if label in ['H', 'G', 'I']: 
+            return 'H'  # Helices
+        elif label in ['E', 'B']: 
+            return 'E'  # Beta Sheets/Bridges
+        else: 
+            return 'C'  # Everything else (Turns, Bends, Random Coils)
+            
+    # Apply mapping
+    train_df['label'] = train_df['secondary_structure'].apply(map_to_q3)
+
     seq_dict = {}
     for record in SeqIO.parse("base/sequences.fasta", "fasta"):
         protein_id = record.id.strip() 
@@ -62,7 +74,7 @@ def main():
         # USE THIS ONE FOR REAL MODEL
         #for protein_id, sequence in tqdm(seq_dict.items(), desc="Embedding sequences", unit="seq"):
         # SLICE: Only take the first 500 items to speed up development bc i dont have 8 hours
-        for protein_id, sequence in tqdm(list(seq_dict.items())[:500], desc="Embedding sequences", unit="seq"):
+        for protein_id, sequence in tqdm(list(seq_dict.items())[:100], desc="Embedding sequences", unit="seq"):
             inputs = tokenizer(sequence, return_tensors="pt", truncation=True)
             inputs = {k: v.to(device) for k, v in inputs.items()}
 
