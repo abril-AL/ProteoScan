@@ -12,6 +12,10 @@ Developed from a (more boring) class assignment, this project has been refactore
     * Generates high-dimensional token embeddings using Hugging Face's ESM-2 model.
     * Executes a batched training loop for the `SGDClassifier`.
     * Serializes and saves the final model artifacts to disk using `joblib`.
+* **`inference.py`**: The Logic Bridge.
+    * Abstracted module that strictly handles ESM-2 tokenization and Scikit-Learn prediction logic, decoupling the machine learning backend from the frontend UI.
+    * Features `load_ml_artifacts()` to load the `.joblib` model weights and LabelEncoder into memory.
+    * Features `predict_secondary_structure()` which takes a raw string input, processes the 50-dimensional ESM-2 embeddings, and returns Q3 (Helix, Sheet, Coil) predictions alongside confidence probability scores.
 * **`base/`**: The data and legacy code directory.
     * Contains the original raw datasets (`train.tsv`, `test.tsv`, `sequences.fasta`).
     * `batching.py`: Helper module for feature extraction and memory management.
