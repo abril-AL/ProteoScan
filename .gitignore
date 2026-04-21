@@ -3,3 +3,4 @@ train_y*
 models/
 esm_*
 *pycache*
+.*

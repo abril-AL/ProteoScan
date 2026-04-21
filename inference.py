@@ -66,11 +66,11 @@ def predict_secondary_structure(sequence: str, tokenizer, esm_model, clf, le, de
 def get_structure_svg(pred):
     """Returns a raw SVG string based on the predicted structure, minified for Streamlit."""
     if pred == 'H':
-        return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#3b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12 C 4 4, 10 4, 10 12 C 10 20, 16 20, 16 12 C 16 4, 22 4, 22 12' /></svg>"
+        return "<svg width='100%' height='100%' viewBox='0 0 24 24' fill='none' stroke='#3b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12 C 4 4, 10 4, 10 12 C 10 20, 16 20, 16 12 C 16 4, 22 4, 22 12' /></svg>"
     elif pred == 'E':
-        return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#ef4444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12 h14 M12 5 l7 7 l-7 7' /></svg>"
+        return "<svg width='100%' height='100%' viewBox='0 0 24 24' fill='none' stroke='#ef4444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12 h14 M12 5 l7 7 l-7 7' /></svg>"
     else:
-        return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#9ca3af' stroke-width='2.5' stroke-linecap='round' stroke-dasharray='4 4'><path d='M4 12 h16' /></svg>"
+        return "<svg width='100%' height='100%' viewBox='0 0 24 24' fill='none' stroke='#9ca3af' stroke-width='2.5' stroke-linecap='round' stroke-dasharray='4 4'><path d='M4 12 h16' /></svg>"
 
 # --- Quick Local Test ---
 # If you run `python inference.py` directly, it will test the bridge.
