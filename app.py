@@ -1,8 +1,11 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import time
 import random
+import base64
+import os
 
 # --- 1. MOCK INFERENCE FUNCTION ---
 # TODO: replace with pred/conf logic
@@ -76,7 +79,7 @@ with col2:
             st.subheader("Secondary Structure Map")
             
             # --- Part A: Prediction/Confidence ---
-            fig, ax = plt.subplots(figsize=(10, 2))
+            fig, ax = plt.subplots(figsize=(10, 2.5))
             x_indices = np.arange(1, len(sequence_input) + 1)
             
             colors = []
@@ -86,44 +89,82 @@ with col2:
                 else: colors.append('#9ca3af')            # Gray
                 
             ax.bar(x_indices, confidences, color=colors, edgecolor='black')
-            ax.set_ylim(0, 1.1)
+            ax.set_ylim(0, 1.3)
             ax.set_xlim(0, len(sequence_input) + 1)
             ax.set_xlabel("Residue Index")
+            ax.set_xticks(np.arange(5, len(sequence_input) + 1, 5))
             ax.set_ylabel("Model Confidence")
             
+            # Legend handles 
+            helix_patch = mpatches.Patch(color='#3b82f6', label='Helix (H)')
+            sheet_patch = mpatches.Patch(color='#ef4444', label='Sheet (E)')
+            coil_patch  = mpatches.Patch(color='#9ca3af', label='Coil (C)')
+            ax.legend(handles=[helix_patch, sheet_patch, coil_patch], loc='upper right', ncol=3, framealpha=0.9)
+
             # Render the plot
             st.pyplot(fig)
             
-            # --- Part B: The Colored Sequence Text ---
+            # --- Part B: The Sequence with Images ---
+
+            # --- Helper Function for SVG Icons ---
+            def get_structure_svg(pred):
+                """Returns a raw SVG string based on the predicted structure, minified to prevent Streamlit bugs."""
+                if pred == 'H':
+                    return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#3b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12 C 4 4, 10 4, 10 12 C 10 20, 16 20, 16 12 C 16 4, 22 4, 22 12' /></svg>"
+                elif pred == 'E':
+                    return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#ef4444' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12 h14 M12 5 l7 7 l-7 7' /></svg>"
+                else:
+                    return "<svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='#9ca3af' stroke-width='2.5' stroke-linecap='round' stroke-dasharray='4 4'><path d='M4 12 h16' /></svg>"
+
+            # --- Part B: The Sequence with Embedded SVGs ---
             st.markdown("#### Sequence Topology Overview")
             
-            # We build this string without multi-line indentation to prevent the code-block bug
-            colored_sequence_html = "<div style='font-family: monospace; font-size: 24px; letter-spacing: 6px; margin-bottom: 15px;'>"
+            # Start the flex container (minified)
+            colored_sequence_html = "<div style='display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; font-family: monospace; font-size: 20px; font-weight: bold;'>"
             
             for aa, pred in zip(sequence_input, predictions):
-                if pred == 'H': 
-                    color = "#3b82f6" # Blue
-                elif pred == 'E': 
-                    color = "#ef4444" # Red
-                else: 
-                    color = "#9ca3af" # Gray
-                
-                # Add a 'title' so if you hover over the letter it shows the prediction
-                colored_sequence_html += f"<span style='color: {color}; font-weight: bold;' title='Prediction: {pred}'>{aa}</span>"
-                
+                # Determine the correct color for the text
+                if pred == 'H': color = "#3b82f6"
+                elif pred == 'E': color = "#ef4444"
+                else: color = "#9ca3af"
+    
+                # Fetch the pure SVG code
+                svg_icon = get_structure_svg(pred)
+    
+                # Create the column for each residue (Minified into one line to prevent Markdown breaking)
+                colored_sequence_html += f"<div style='display:flex; flex-direction:column; align-items:center; width:28px;' title='Prediction: {pred}'><div style='height:24px; margin-bottom:2px;'>{svg_icon}</div><span style='color:{color};'>{aa}</span></div>"
+    
             colored_sequence_html += "</div>"
-            
-            # Render the colored text
+
+            # Render the HTML
             st.markdown(colored_sequence_html, unsafe_allow_html=True)
             
-            # Simple Legend
-            st.markdown("""
-            **Legend:** &nbsp;&nbsp;
-            <span style='color:#3b82f6;'><b>Blue (H)</b></span> = Alpha Helix &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <span style='color:#ef4444;'><b>Red (E)</b></span> = Beta Sheet &nbsp;&nbsp;|&nbsp;&nbsp; 
-            <span style='color:#9ca3af;'><b>Gray (C)</b></span> = Random Coil
-            """, unsafe_allow_html=True)
+            # --- Part C: VISUAL LEGEND ---
+            st.markdown("#### Legend")
             
+            # Fetch the SVGs for the legend
+            helix_svg = get_structure_svg('H')
+            sheet_svg = get_structure_svg('E')
+            coil_svg = get_structure_svg('C')
+            
+            # Create a minified flexbox layout for the legend items
+            legend_html = "<div style='display: flex; gap: 24px; align-items: center; font-family: sans-serif; font-size: 16px; margin-top: 10px; margin-bottom: 20px;'>"
+            
+            # Helix Item
+            legend_html += f"<div style='display: flex; align-items: center; gap: 8px;'><div style='width: 24px; height: 24px;'>{helix_svg}</div><span style='color: #3b82f6; font-weight: bold;'>Alpha Helix (H)</span></div>"
+            
+            # Sheet Item
+            legend_html += f"<div style='display: flex; align-items: center; gap: 8px;'><div style='width: 24px; height: 24px;'>{sheet_svg}</div><span style='color: #ef4444; font-weight: bold;'>Beta Sheet (E)</span></div>"
+            
+            # Coil Item
+            legend_html += f"<div style='display: flex; align-items: center; gap: 8px;'><div style='width: 24px; height: 24px;'>{coil_svg}</div><span style='color: #9ca3af; font-weight: bold;'>Random Coil (C)</span></div>"
+            
+            legend_html += "</div>"
+            
+            # Render the legend
+            st.markdown(legend_html, unsafe_allow_html=True)
+
+
             # --- 5. BIOLOGICAL INSIGHTS ---
             st.subheader("Biological Insights")
             
@@ -136,3 +177,4 @@ with col2:
 
         else:
             st.error("Please enter a valid amino acid sequence containing only letters.")
+

@@ -3,9 +3,11 @@ GUI that takes raw protein sequences, runs it through an ESM-2/SGDClassifier pip
 
 # Overview
 
-'base' directory
+`base` directory
 - includes files related to the original class assignment that ProteoScan builds off of
 - has the data that was used to train and test the model
-- 'legacy_code.py' the "all-in-one" script that trains and predicts
-    - calls 'batching.py' for feature extraction
+- `legacy_code.py` the "all-in-one" script that trains and predicts
+    - calls `batching.py` for feature extraction
 
+`app.p`
+- runs the ProteoScan streamlit app / GUI
