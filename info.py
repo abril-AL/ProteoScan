@@ -40,6 +40,7 @@ def render_technical_overview():
     ### 3. Motivation
     
     **Why ProteoScan?**
+                
     Finding the structure of a protein took John Kendrew 12 years and earned him a nobel prize.
     The old way, protein crystallization is expensive and time-consuming.
     Today AI can speed up this process from years to seconds. ProteoScan is a proof-of-concept that demonstrates how we can leverage 
@@ -56,21 +57,25 @@ def render_technical_overview():
     ### 4. What's it Actually Doing ?
             
     **Primary Structure**
-        This is the sequence of amino acids in the protein, represented by single-letter codes (e.g., M for Methionine, A for Alanine). 
-        It is the most basic level of protein structure and determines all higher levels.
+                
+    This is the sequence of amino acids in the protein, represented by single-letter codes (e.g., M for Methionine, A for Alanine). 
+    It is the most basic level of protein structure and determines all higher levels.
     """ )          
     st.image("assets/ps.png", caption="Primary Structure", width=400)
     st.markdown("""
     **Secondary Structure (What ProteoScan Predicts)**
-    This refers to local spatial arrangements of the amino acid chain, primarily:
-        - **Alpha Helices (H)**: Coiled structures stabilized by hydrogen bonds.
-        - **Beta Sheets (E)**: Flattened, pleated structures formed by hydrogen bonds between different segments of the chain.
-        - **Random Coils (C)**: Irregular, flexible regions that do not fit into the other two categories.
+                
+    This refers to local spatial arrangements of the amino acid chain, primarily:            
+    - **Alpha Helices (H)**: Coiled structures stabilized by hydrogen bonds.
+    - **Beta Sheets (E)**: Flattened, pleated structures formed by hydrogen bonds between different segments of the chain.
+    - **Random Coils (C)**: Irregular, flexible regions that do not fit into the other two categories.
     The secondary structure is crucial for understanding the protein's overall shape and function.""")
 
     st.image("assets/ss.png", caption="Secondary Structure", width=500)
     st.markdown("""
+                
     **Tertiary Structure**
+                
     This is the three-dimensional folding of the entire protein, determined by interactions between the secondary structure
     elements. It is the most critical level for understanding the protein's function, as it dictates how the protein interacts with other molecules.   
     - This is where AlphaFold, created at DeepMind, comes in. It uses deep learning to predict the tertiary structure of proteins with remarkable accuracy, 
