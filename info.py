@@ -45,6 +45,32 @@ def render_technical_overview():
     The old way, protein crystallization is expensive and time-consuming.
     Today AI can speed up this process from years to seconds. ProteoScan is a proof-of-concept that demonstrates how we can leverage 
     state-of-the-art transformer models and classical machine learning techniques to democratize access to protein structure prediction.
+    
+    ### 4. More Technical Details             
+                
+    **What is ESM-2 ?**
+                
+    ESM-2 is a family of transformer-based language models developed by Facebook AI Research (FAIR) specifically for protein 
+    sequences. It is trained on a massive dataset of protein sequences and learns
+    to generate rich embeddings that capture the underlying biological properties of the sequences. These embeddings can then be 
+    used for various downstream tasks, such as secondary structure prediction, as we do in ProteoScan.
+
+    **How did I use it in ProteoScan ?**
+                
+    In ProteoScan, we use the ESM-2 model to extract features from the input amino acid sequence. The model outputs a high-dimensional embedding for each residue, which we then slice down to the first 50 dimensions to reduce memory usage. These embeddings are fed into a linear classifier (SGDClassifier) that has been trained to predict the secondary structure labels (H, E, C) based on the Q3 mapping. This combination allows us to leverage the powerful contextual understanding of the transformer while maintaining a lightweight and efficient inference pipeline suitable for real-time predictions in a web application.
+
+    **What is SGDClassifier ?**
+                
+    The `SGDClassifier` is a linear classifier from Scikit-Learn that uses stochastic gradient descent for optimization. It is particularly well-suited for large datasets and high-dimensional feature spaces, making it a good choice for our use case where we have dense embeddings from the ESM-2 model. The `SGDClassifier` is efficient and can be easily trained on the transformed feature space, allowing us to achieve good performance on the secondary structure prediction task while keeping the inference time low.
+
+    **Is this AI or just a linear model ?**
+                
+    The ESM-2 model is a state-of-the-art transformer-based language model that has been trained on a vast amount of protein 
+    sequence data. It captures complex patterns and relationships in the sequences, making it a powerful tool for feature
+    extraction. The `SGDClassifier` is a linear model that we use for the final classification step. While the `SGDClassifier` 
+    itself is a linear model, the overall system leverages the advanced capabilities of the ESM-2 transformer, which is considered 
+    a form of AI. The combination of the transformer for feature extraction and the linear classifier for prediction allows us to 
+    create a system that is both powerful and efficient for the task of protein secondary structure prediction.                
     """)
 
     col1, col2 = st.columns(2)    
@@ -54,7 +80,7 @@ def render_technical_overview():
         st.image("assets/myo.png", caption="Myogloobin Structure", width=300)
     
     st.markdown("""                            
-    ### 4. What's it Actually Doing ?
+    ### 5. What's it Actually Doing ?
             
     **Primary Structure**
                 

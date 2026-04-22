@@ -8,7 +8,9 @@ import base64
 import os
 import inference
 from google import genai
+from google.genai import errors  
 import info
+import present
 
 # --- SETTING UP MODELS ---
 @st.cache_resource
@@ -28,7 +30,7 @@ st.set_page_config(page_title="ProteoScan", layout="wide")
 
 # Navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to:", ["ProteoScan App", "Technical Overview"])
+page = st.sidebar.radio("Go to:", ["ProteoScan App", "Technical Overview", "Presentation"])
 
 if page == "ProteoScan App":
     st.title("🧬 ProteoScan: Secondary Structure Predictor")
@@ -38,7 +40,7 @@ if page == "ProteoScan App":
         st.header("Input Sequence")
         sequence_input = st.text_area(
             "Paste Protein Sequence (AA):", 
-            "MKTLLILVLCFLPLAALG", # Default test sequence
+            "MKIATYNVRVDTEYDQDWQWSFRKEAVCQLINFHDWSLCCIQEVRPNQVRDLKAYTTFTCLSAEREGDGQGEGLAILYNEQKVQAII", # Default test sequence
             height=150
         ).upper().strip().replace("\n", "")
         
@@ -82,10 +84,10 @@ if page == "ProteoScan App":
                 elif p == 'E': plot_colors.append('#ef4444') 
                 else: plot_colors.append('#9ca3af') 
                 
-            ax.bar(x_indices, confidences, color=plot_colors, edgecolor='black')
+            ax.bar(x_indices, confidences, color=plot_colors, edgecolor='none')
             ax.set_ylim(0, 1.3)
             ax.set_xlabel("Residue Index")
-            ax.set_xticks(np.arange(5, len(sequence_input) + 1, 5))
+            ax.set_xticks([])
             ax.set_ylabel("Confidence")
                 
             h_patch = mpatches.Patch(color='#3b82f6', label='Helix (H)')
@@ -126,8 +128,14 @@ if page == "ProteoScan App":
                             contents=prompt
                         )
                         st.markdown(response.text)
+                    except errors.APIError as e:
+                        if e.code == 429:
+                            st.warning("**API Rate Limit Reached:** We have hit our 20 requests/day quota. Please try again tomorrow!")
+                        else:
+                            st.error(f"**Gemini API Error:** {e}")
                     except Exception as e:
-                        st.error(f"Error connecting to AI: {e}")
-
+                        st.error(f"**An unexpected error occurred:** {e}")
 elif page == "Technical Overview":
     info.render_technical_overview()
+elif page == "Presentation":
+    present.render_presentation()
