@@ -8,7 +8,7 @@ import base64
 import os
 import inference
 from google import genai
-from google.genai import errors  
+from google.genai import errors # type: ignore
 import info
 import present
 

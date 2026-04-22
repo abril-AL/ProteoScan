@@ -1,6 +1,5 @@
 train_X*
 train_y*
-models/
-esm_*
 *pycache*
 .*
+esm_embeddings.pkl
