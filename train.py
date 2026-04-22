@@ -37,7 +37,8 @@ def main():
             return 'C'  # Everything else (Turns, Bends, Random Coils)
             
     # Apply mapping
-    train_df['label'] = train_df['secondary_structure'].apply(map_to_q3)
+    #train_df['label'] = train_df['secondary_structure'].apply(map_to_q3)
+    train_df['secondary_structure'] = train_df['secondary_structure'].apply(map_to_q3)
 
     seq_dict = {}
     for record in SeqIO.parse("base/sequences.fasta", "fasta"):
@@ -109,7 +110,8 @@ def main():
     clf = SGDClassifier(loss='log_loss',  
                         max_iter=1,       
                         learning_rate='optimal',
-                        warm_start=True)
+                        warm_start=True,
+                        class_weight='balanced')
 
     for i in tqdm(range(total_batches - 1), desc="Training in batches"):
         X = np.load(x_batches[i])
